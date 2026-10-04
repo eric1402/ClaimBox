@@ -22,9 +22,9 @@ export const Hero = () => {
       <HeroBackgroundStreaks />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 xl:gap-12 items-center">
           {/* Left Column: Headline and CTAs (5 to 6 cols) */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-6 text-left">
+          <div className="lg:col-span-6 xl:col-span-5 space-y-6 text-left min-w-0 relative z-10">
             <Reveal delay={100}>
               <Pill variant="dark" icon="★" className="mb-2">
                 Your Purchases. Always Organized.
@@ -32,9 +32,9 @@ export const Hero = () => {
             </Reveal>
 
             <Reveal delay={200}>
-              <h1 className="text-4xl sm:text-5xl lg:text-[54px] xl:text-[60px] font-extrabold tracking-tight text-white leading-[1.08]">
-                <span className="block whitespace-nowrap">Everything you buy,</span>
-                <span className="block whitespace-nowrap">always <span className="text-[#D4A95C]">with you.</span></span>
+              <h1 className="text-4xl sm:text-5xl lg:text-[48px] xl:text-[60px] font-extrabold tracking-tight text-white leading-[1.08] text-balance">
+                <span className="block">Everything you buy,</span>
+                <span className="block">always <span className="text-[#D4A95C]">with you.</span></span>
               </h1>
             </Reveal>
 
@@ -94,11 +94,13 @@ export const Hero = () => {
           </div>
 
           {/* Right Column: 3D Tilted Laptop Frame (7 cols) */}
-          <div className="lg:col-span-7 xl:col-span-7 relative">
+          <div className="lg:col-span-6 xl:col-span-7 relative z-0 min-w-0 w-full">
             <Reveal delay={250} direction="left">
-              <div className="perspective-1000">
-                <div className="laptop-tilt animate-subtle-float">
-                  <DashboardMockup />
+              <div className="perspective-1000 w-full">
+                <div className="laptop-tilt">
+                  <div className="animate-subtle-float">
+                    <DashboardMockup />
+                  </div>
                 </div>
               </div>
             </Reveal>

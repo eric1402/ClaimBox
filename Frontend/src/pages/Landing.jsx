@@ -13,7 +13,7 @@ import Footer from '../components/Footer';
 
 export const Landing = () => {
   return (
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#0A0A0A] flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#0A0A0A] flex flex-col font-sans transition-colors duration-200">
       {/* 1. Navbar */}
       <Navbar />
 

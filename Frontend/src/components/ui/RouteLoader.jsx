@@ -83,7 +83,7 @@ export const RouteLoader = () => {
         }`}
         aria-hidden="true"
       >
-        <div className="h-full w-full bg-white/5">
+        <div className="h-full w-full bg-transparent">
           <div
             className="h-full bg-gradient-to-r from-[#D4A95C] via-[#E8C87E] to-[#F5E6C8] shadow-[0_0_10px_rgba(212,169,92,0.8)] will-change-transform"
             style={{

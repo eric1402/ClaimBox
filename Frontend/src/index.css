@@ -2,13 +2,13 @@
 
 @layer base {
   :root {
-    --bg-page: #FAFAF8;
-    --bg-surface: #FFFFFF;
-    --bg-surface-subtle: #F5F5F0;
-    --border-color: #ECECE8;
-    --text-primary: #111111;
-    --text-secondary: #666666;
-    --text-muted: #8E8E8E;
+    --bg-page: #0A0A0A;
+    --bg-surface: #111111;
+    --bg-surface-subtle: #161616;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #F5F1EA;
+    --text-secondary: #A0A0A0;
+    --text-muted: #737373;
     --gold: #D4A95C;
     --gold-tint: rgba(212, 169, 92, 0.12);
     --gold-border: rgba(212, 169, 92, 0.28);
@@ -31,12 +31,21 @@
   }
 
   body {
-    background-color: var(--bg-page);
+    background-color: #0A0A0A;
     color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+  }
+
+  html {
+    background-color: #0A0A0A;
+  }
+
+  #root {
+    background-color: #0A0A0A;
+    min-height: 100vh;
   }
 
   * {
@@ -131,6 +140,7 @@
 .page-enter {
   animation: page-enter-anim 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: opacity, transform;
+  background-color: #0A0A0A;
 }
 
 /* Respect reduced motion */

@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-page: #FAFAF8;
+    --bg-surface: #FFFFFF;
+    --bg-surface-subtle: #F5F5F0;
+    --border-color: #ECECE8;
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --text-muted: #8E8E8E;
+    --gold: #D4A95C;
+    --gold-tint: rgba(212, 169, 92, 0.12);
+    --gold-border: rgba(212, 169, 92, 0.28);
+    --dark-bg: #0A0A0A;
+    --dark-surface: #111111;
+    --dark-card: #161616;
+    --dark-border: rgba(255, 255, 255, 0.08);
+    --dark-text: #F5F1EA;
+    --dark-muted: #8E8E8E;
+  }
+
+  html.dark {
+    --bg-page: #0C0C0C;
+    --bg-surface: #141414;
+    --bg-surface-subtle: #1A1A1A;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #F5F1EA;
+    --text-secondary: #A0A0A0;
+    --text-muted: #737373;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Custom Utilities and Animations */
+.glass-dark {
+  background: rgba(18, 18, 18, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.perspective-1000 {
+  perspective: 1200px;
+}
+
+.laptop-tilt {
+  transform: perspective(1200px) rotateX(4deg) rotateY(-4deg) rotateZ(1deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.laptop-tilt:hover {
+  transform: perspective(1200px) rotateX(2deg) rotateY(-2deg) rotateZ(0deg);
+}
+
+/* Subtle float animation */
+@keyframes subtle-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-subtle-float {
+  animation: subtle-float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.28; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .laptop-tilt {
+    transform: none !important;
+  }
+  .animate-subtle-float {
+    animation: none !important;
+  }
+}

@@ -2,6 +2,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
+import { RouteLoader, ScrollToTop, InitialPageLoader } from './components/ui/RouteLoader';
 
 // Lazy loaded pages for Phase 2
 const Login = lazy(() => import('./pages/Login'));
@@ -16,20 +17,14 @@ const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading spinner fallback
-const PageLoader = () => (
-  <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center text-[#D4A95C]">
-    <div className="flex flex-col items-center gap-3">
-      <div className="w-8 h-8 border-2 border-[#D4A95C] border-t-transparent rounded-full animate-spin" />
-      <span className="text-xs text-neutral-400 font-medium">Loading ClaimBox...</span>
-    </div>
-  </div>
-);
+const PageLoader = () => <InitialPageLoader />;
 
-function App() {
+function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
+    <>
+      <ScrollToTop />
+      <RouteLoader />
+      <Routes>
           {/* Phase 1: Landing Page */}
           <Route path="/" element={<Landing />} />
 
@@ -48,6 +43,15 @@ function App() {
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<PageLoader />}>
+        <AppRoutes />
       </Suspense>
     </BrowserRouter>
   );

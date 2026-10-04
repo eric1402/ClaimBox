@@ -95,60 +95,42 @@
   animation: pulse-slow 8s ease-in-out infinite;
 }
 
-/* Route transition loader */
-@keyframes route-bar-slide {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(300%); }
+/* Route transition loader — smooth, single-motion */
+@keyframes route-shimmer-smooth {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(240%); }
 }
 
-.route-bar {
-  animation: route-bar-slide 0.9s ease-in-out infinite;
+.route-shimmer-smooth {
+  animation: route-shimmer-smooth 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
 }
 
-@keyframes route-cube-float {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-4px) scale(1.06); }
+@keyframes route-soft-dot-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
-.route-cube {
-  animation: route-cube-float 1.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(212, 169, 92, 0.45));
+.route-soft-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: #D4A95C;
+  animation: route-soft-dot-pulse 1.2s ease-in-out infinite;
 }
 
-@keyframes route-ring-ping {
-  0% { transform: scale(0.85); opacity: 0.8; }
-  100% { transform: scale(1.25); opacity: 0; }
+.route-soft-dot-2 { animation-delay: 0.15s; }
+.route-soft-dot-3 { animation-delay: 0.3s; }
+
+/* Soft page enter on route change */
+@keyframes page-enter-anim {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.route-ring {
-  animation: route-ring-ping 1.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-@keyframes route-shimmer-slide {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
-}
-
-.route-shimmer {
-  animation: route-shimmer-slide 1.1s ease-in-out infinite;
-}
-
-@keyframes route-dot-bounce {
-  0%, 60%, 100% { opacity: 0.25; }
-  30% { opacity: 1; }
-}
-
-.route-dots span {
-  animation: route-dot-bounce 1s infinite;
-  display: inline-block;
-}
-
-.route-dots span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.route-dots span:nth-child(3) {
-  animation-delay: 0.3s;
+.page-enter {
+  animation: page-enter-anim 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
 }
 
 /* Respect reduced motion */

@@ -25,18 +25,20 @@ const getLabel = (pathname) => {
 export const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo(0, 0);
   }, [pathname]);
   return null;
 };
 
+/** Smooth top progress bar + soft floating pill. No blocking overlay, no flicker. */
 export const RouteLoader = () => {
   const location = useLocation();
-  const [visible, setVisible] = useState(false);
-  const [leaving, setLeaving] = useState(false);
+  const [active, setActive] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [label, setLabel] = useState('');
   const firstRender = useRef(true);
-  const timers = useRef([]);
+  const raf = useRef(null);
+  const timeouts = useRef([]);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -44,90 +46,102 @@ export const RouteLoader = () => {
       return;
     }
     setLabel(getLabel(location.pathname));
-    setVisible(true);
-    setLeaving(false);
+    setActive(true);
+    setProgress(0);
 
-    timers.current.forEach(clearTimeout);
-    timers.current = [
-      setTimeout(() => setLeaving(true), 500),
-      setTimeout(() => setVisible(false), 800),
-    ];
+    const start = performance.now();
+    const DURATION = 750;
 
-    return () => timers.current.forEach(clearTimeout);
+    const tick = (now) => {
+      const t = Math.min((now - start) / DURATION, 1);
+      // easeOutCubic to 90%
+      const eased = 1 - Math.pow(1 - t, 3);
+      setProgress(Math.round(eased * 90));
+      if (t < 1) {
+        raf.current = requestAnimationFrame(tick);
+      } else {
+        // finish smoothly to 100 then fade out
+        setProgress(100);
+        timeouts.current.push(setTimeout(() => setActive(false), 350));
+      }
+    };
+    raf.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (raf.current) cancelAnimationFrame(raf.current);
+      timeouts.current.forEach(clearTimeout);
+      timeouts.current = [];
+    };
   }, [location.pathname]);
 
-  if (!visible) return null;
-
   return (
-    <div
-      className={`fixed inset-0 z-[100] pointer-events-auto flex items-center justify-center transition-opacity duration-300 ${
-        leaving ? 'opacity-0' : 'opacity-100'
-      }`}
-      aria-hidden="true"
-    >
-      {/* Dim + blur backdrop */}
-      <div className="absolute inset-0 bg-[#0A0A0A]/70 backdrop-blur-[6px]" />
-
-      {/* Top gold progress bar */}
-      <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden bg-white/5">
-        <div className="route-bar h-full w-1/3 bg-gradient-to-r from-transparent via-[#D4A95C] to-[#F5E6C8] shadow-[0_0_12px_rgba(212,169,92,0.9)]" />
-      </div>
-
-      {/* Center card */}
+    <>
+      {/* Top gold progress bar — always mounted, opacity animated */}
       <div
-        className={`relative flex flex-col items-center gap-4 px-8 py-7 rounded-3xl bg-[#111111]/90 border border-white/10 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.9)] transition-all duration-300 ${
-          leaving ? 'scale-95 translate-y-2' : 'scale-100 translate-y-0'
+        className={`fixed top-0 left-0 right-0 z-[100] h-[2px] pointer-events-none transition-opacity duration-300 ${
+          active ? 'opacity-100' : 'opacity-0'
         }`}
+        aria-hidden="true"
       >
-        {/* Glowing ring behind cube */}
-        <div className="relative flex items-center justify-center">
-          <div className="absolute w-20 h-20 rounded-full bg-[#D4A95C]/15 blur-2xl animate-pulse" />
-          <div className="absolute w-16 h-16 rounded-full border border-[#D4A95C]/25 route-ring" />
-          <div className="absolute w-16 h-16 rounded-full border-t-2 border-[#D4A95C] animate-spin" />
-          <div className="relative route-cube">
-            <CubeIcon className="w-9 h-9" />
-          </div>
-        </div>
-
-        <div className="text-center space-y-1.5">
-          <p className="text-sm font-semibold text-white tracking-tight">
-            {label}
-            <span className="route-dots ml-0.5">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
-            </span>
-          </p>
-          <p className="text-[11px] text-neutral-500 font-medium tracking-wide">
-            Your purchases. Always with you.
-          </p>
-        </div>
-
-        {/* Shimmer line */}
-        <div className="w-40 h-[3px] rounded-full bg-white/8 overflow-hidden">
-          <div className="route-shimmer h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#D4A95C] to-transparent" />
+        <div className="h-full w-full bg-white/5">
+          <div
+            className="h-full bg-gradient-to-r from-[#D4A95C] via-[#E8C87E] to-[#F5E6C8] shadow-[0_0_10px_rgba(212,169,92,0.8)] will-change-transform"
+            style={{
+              width: `${progress}%`,
+              transition: 'width 120ms ease-out',
+            }}
+          />
         </div>
       </div>
+
+      {/* Soft floating pill — no backdrop blur, no blocking */}
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          active ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'
+        }`}
+        aria-hidden="true"
+      >
+        <div className="flex items-center gap-3 pl-3 pr-5 py-2.5 rounded-full bg-[#141414]/95 border border-white/10 shadow-[0_16px_50px_-10px_rgba(0,0,0,0.85)]">
+          <span className="relative flex items-center justify-center w-8 h-8">
+            <span className="absolute inset-0 rounded-full border border-white/10" />
+            <span className="absolute inset-0 rounded-full border-t-2 border-[#D4A95C] animate-spin" />
+            <CubeIcon className="w-4 h-4" />
+          </span>
+          <span className="text-xs font-semibold text-white tracking-tight whitespace-nowrap">
+            {label}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="route-soft-dot" />
+            <span className="route-soft-dot route-soft-dot-2" />
+            <span className="route-soft-dot route-soft-dot-3" />
+          </span>
+        </div>
+      </div>
+    </>
+  );
+};
+
+/** Page content fades/slides in softly on every route change. */
+export const PageFade = ({ children }) => {
+  const { pathname } = useLocation();
+  return (
+    <div key={pathname} className="page-enter">
+      {children}
     </div>
   );
 };
 
 export const InitialPageLoader = () => (
   <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-    <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden bg-white/5">
-      <div className="route-bar h-full w-1/3 bg-gradient-to-r from-transparent via-[#D4A95C] to-[#F5E6C8]" />
-    </div>
-    <div className="flex flex-col items-center gap-4 px-8 py-7 rounded-3xl bg-[#111111]/90 border border-white/10">
-      <div className="relative flex items-center justify-center">
-        <div className="absolute w-20 h-20 rounded-full bg-[#D4A95C]/15 blur-2xl animate-pulse" />
-        <div className="absolute w-16 h-16 rounded-full border-t-2 border-[#D4A95C] animate-spin" />
-        <div className="relative route-cube">
-          <CubeIcon className="w-9 h-9" />
-        </div>
-      </div>
-      <p className="text-sm font-semibold text-white">Loading ClaimBox...</p>
-      <div className="w-40 h-[3px] rounded-full bg-white/8 overflow-hidden">
-        <div className="route-shimmer h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#D4A95C] to-transparent" />
+    <div className="flex flex-col items-center gap-5">
+      <span className="relative flex items-center justify-center w-16 h-16">
+        <span className="absolute inset-0 rounded-full border border-white/10" />
+        <span className="absolute inset-0 rounded-full border-t-2 border-[#D4A95C] animate-spin" />
+        <CubeIcon className="w-7 h-7" />
+      </span>
+      <p className="text-sm font-semibold text-white tracking-tight">Loading ClaimBox</p>
+      <div className="w-44 h-[2px] rounded-full bg-white/10 overflow-hidden">
+        <div className="route-shimmer-smooth h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#D4A95C] to-transparent" />
       </div>
     </div>
   </div>

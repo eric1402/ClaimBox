@@ -2,7 +2,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
-import { RouteLoader, ScrollToTop, InitialPageLoader } from './components/ui/RouteLoader';
+import { RouteLoader, ScrollToTop, InitialPageLoader, PageFade } from './components/ui/RouteLoader';
 
 // Lazy loaded pages for Phase 2
 const Login = lazy(() => import('./pages/Login'));
@@ -24,6 +24,7 @@ function AppRoutes() {
     <>
       <ScrollToTop />
       <RouteLoader />
+      <PageFade>
       <Routes>
           {/* Phase 1: Landing Page */}
           <Route path="/" element={<Landing />} />
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
+      </PageFade>
     </>
   );
 }
